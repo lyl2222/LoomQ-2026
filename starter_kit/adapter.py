@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 """LoomQ submission adapter contract v1.0.
 
-This file intentionally contains no scoring implementation. Teams may implement
-the functions directly or delegate to another language/runtime with subprocess.
+The public functions stay intentionally thin.  All vendors share the same
+parser and neutral circuit model under ``loomq``; only rendering and execution
+are backend-specific.
 """
 
 from typing import Any, Dict, List, Tuple
+
+try:
+    from .loomq import execute, parse_qasm2, render_target
+    from .loomq.agent import agent_chat as _agent_chat
+except ImportError:  # Support ``python evaluator.py`` inside starter_kit/.
+    from loomq import execute, parse_qasm2, render_target
+    from loomq.agent import agent_chat as _agent_chat
 
 
 SUPPORTED_TARGETS = ("spinq", "originq", "braket")
@@ -13,17 +21,19 @@ SUPPORTED_TARGETS = ("spinq", "originq", "braket")
 
 def transpile(qasm_str: str, target: str) -> str:
     """Translate OpenQASM 2.0 into the target backend's native representation."""
-    raise NotImplementedError("Implement transpile(qasm_str, target)")
+    circuit = parse_qasm2(qasm_str)
+    return render_target(circuit, target)
 
 
 def run(qasm_str: str, target: str, shots: int) -> Dict[str, Any]:
     """Execute a circuit and return the unified result schema from the rules."""
-    raise NotImplementedError("Implement run(qasm_str, target, shots)")
+    circuit = parse_qasm2(qasm_str)
+    return execute(circuit, target, shots)
 
 
 def agent_chat(prompt: str) -> str:
-    """Optional L2 entry point using the documented LOOMQ_LLM_* environment."""
-    raise NotImplementedError("L2 is optional; implement agent_chat(prompt) to enter")
+    """Turn a plain-language request into a verified circuit or backend choice."""
+    return _agent_chat(prompt)
 
 
 def compile_hybrid(hybrid_qasm_str: str) -> Tuple[List[str], str]:

@@ -57,6 +57,80 @@ docker build -t loomq-submission .
 docker run --rm loomq-submission
 ```
 
+## 本 Fork 的 L1 实现
+
+当前 L1 使用一套共享流程处理三家平台：OpenQASM 2.0 先进入与厂商无关的
+中间电路，再分别输出 SpinQ OpenQASM 2、OriginIR 和 Braket OpenQASM 3。
+执行结果会统一为比赛要求的经典位顺序，不把平台间的位序差异暴露给用户。
+
+三家 SDK 被安装到互相隔离的目录，因为 SpinQit 0.2.4 与 Braket
+LocalSimulator 依赖不兼容的 ANTLR 版本。所有直接和间接依赖均已精确锁定；
+SpinQ 的本地模拟路径只加载官方 QASM 编译器和 BasicSimulator，不需要其
+与量子电路执行无关的 PyTorch 训练接口。
+
+在 `starter_kit/` 中用一条命令构建干净容器，运行三平台公开评测，并让
+三家真实本地 SDK 执行一次覆盖全部 12 个白名单门的兼容性测试：
+
+```bash
+make verify
+```
+
+快速运行不依赖厂商 SDK 的解析、转译和结果归一化单元测试：
+
+```bash
+make unit
+```
+
+## 给第一次接触量子计算的人
+
+这个 Fork 还提供了一个不要求用户先学 QASM 的中文网页。它先用一分钟说明三个
+够用的概念，再通过“预测 → 运行 → 解释 → 小测”带用户完成一次 H、两次 H 的
+对照实验，亲眼区分随机硬币和量子干涉。完成引导后，用户可以再用自然语言自由
+探索。专业代码默认折叠，实验结果会以频次图和生活化说明呈现；同一个实验可以
+切换三家平台，而不需要改写用户意图。
+
+先配置任意 OpenAI-compatible 模型服务，再从 `starter_kit/` 启动：
+
+```bash
+cp .env.example .env   # 填入你自己的 Key，不要提交这个文件
+python3 web_app.py
+```
+
+也可以继续用环境变量，而不创建 `.env`：
+
+```bash
+export LOOMQ_LLM_BASE_URL=https://api.deepseek.com
+export LOOMQ_LLM_API_KEY=<YOUR_OWN_KEY>
+export LOOMQ_LLM_MODEL=<YOUR_MODEL_NAME>
+python3 web_app.py
+```
+
+浏览器访问 `http://127.0.0.1:8000`。API Key 只由服务器进程读取，不会被发送到
+浏览器，也不要把真实 Key 写入仓库。若只想验证工程而不连接模型，运行 `make unit`
+即可；页面会明确显示“等待配置模型服务”。引导实验直接调用本地 OriginQ 模拟器，
+即使没有配置模型也能完整运行，并且不会消耗 LLM Token。
+
+验收引导实验时，依次选择并运行下面三个预测：
+
+1. 不加 H：结果应为全部（或几乎全部）`0`。
+2. 加一个 H：`0` 和 `1` 应接近各一半。
+3. 连续加两个 H：结果应重新变为全部（或几乎全部）`0`。
+
+最后选择“第二个 H 让两条可能路径重新汇合”完成理解检验。由于第二步是概率采样，
+不要求两个计数恰好相等。
+
+网页采用下面这条闭环，而不是把模型生成的文本直接交给用户：
+
+```text
+日常语言 → LLM 生成或修复 → L1 确定性解析 → 本地模拟器试跑
+        ↖        失败原因反馈并重试（最多 3 次）        ↙
+```
+
+当前最明确的服务对象是：会描述问题、会使用普通软件，但没有学过量子物理、QASM
+和三家厂商 SDK 的产品经理、设计师、内容创作者与跨领域开发者。LoomQ 帮他们跨过
+的是“表达意图到第一次可执行实验”这一段门槛，而不是宣称量子计算已经适合所有
+日常计算问题。
+
 ## Adapter 契约
 
 L1 必须实现：
@@ -129,6 +203,11 @@ export LOOMQ_LLM_MODEL=deepseek-v4-flash
 export LOOMQ_LLM_TIMEOUT_SECONDS=120
 python3 evaluator.py --level l2
 ```
+
+本 Fork 的 `agent_chat()` 会把模型产物交给 L1 解析器并在本地模拟器执行；解析或
+执行失败时，错误会反馈给模型重试，最多三次。后端推荐只接受
+`backend_capabilities.json` 中的规范标识，避免模型编造平台名称。相关确定性测试
+覆盖自然语言生成、自验、错误重试、合法后端推荐、无匹配后端与网页 API。
 
 缺少配置时应立即失败，错误信息不得包含任何 Key。正式评测时，组委会将统一注入 DeepSeek 模型服务及调用预算；评测环境不保证能够访问其他外部网络服务。若参加 L2，请把 `submission.yaml` 中的 `levels.l2` 与 `network.required_for_l2` 同时改为 `true`；`allowed_hosts` 不用于申请正式评测中的任意公网访问。
 

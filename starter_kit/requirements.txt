@@ -1,5 +1,4 @@
-# Public evaluator baseline: no third-party dependencies.
-# Add project dependencies below and pin every version exactly, for example:
-# amazon-braket-sdk==<tested-version>
-# spinqit==<tested-version>
+# LoomQ's main adapter uses only the Python standard library.
+# Vendor SDKs are exactly pinned in requirements-{spinq,originq,braket}.txt
+# and installed into isolated import layers by Dockerfile.
 # pyqpanda==<tested-version>

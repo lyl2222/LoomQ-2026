@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="用一句人话完成你的第一个量子实验">
+  <title>LoomQ · 人人都能指挥量子计算</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="LoomQ 首页">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span>LoomQ</span>
+    </a>
+    <div id="model-status" class="status-pill" aria-live="polite">
+      <span class="status-dot"></span>正在检查实验室
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <p class="eyebrow">量子接入平权计划</p>
+      <h1>先说你想看到什么，<br><em>其余交给 LoomQ。</em></h1>
+      <p class="hero-copy">不用学公式，也不用认识那些门。把量子计算想成一个可以重复很多次的特殊实验：你描述目标，我们翻译、试跑，再把结果讲成人话。</p>
+      <a class="primary-link" href="#guided-lab">开始第一个实验 <span aria-hidden="true">↓</span></a>
+    </section>
+
+    <section class="mental-model" aria-labelledby="model-title">
+      <div class="section-intro">
+        <p class="section-number">先懂三件事</p>
+        <h2 id="model-title">不讲黑话的 60 秒入门</h2>
+      </div>
+      <div class="concept-grid">
+        <article class="concept-card">
+          <span class="concept-icon switch-icon" aria-hidden="true"><i></i></span>
+          <p class="concept-step">01 · 量子位</p>
+          <h3>一枚还没揭晓的特殊硬币</h3>
+          <p>普通开关早已是开或关；量子位在揭晓前，还能让多种可能一起参与后续操作。我们不会偷看一次结果，而是重复实验，看整体规律。</p>
+        </article>
+        <article class="concept-card featured">
+          <span class="concept-icon weave-icon" aria-hidden="true"><i></i><i></i></span>
+          <p class="concept-step">02 · 量子操作</p>
+          <h3>给这些可能性编排动作</h3>
+          <p>有的动作把一个确定答案变成两种机会，有的让两枚“硬币”同步变化。门的名字只是机器说明书，你只需说想要哪种关系。</p>
+        </article>
+        <article class="concept-card">
+          <span class="concept-icon reveal-icon" aria-hidden="true"><i></i></span>
+          <p class="concept-step">03 · 测量</p>
+          <h3>开奖一次，再开奖很多次</h3>
+          <p>每次只得到一串 0 和 1。重复几百或几千次后，哪些结果经常一起出现，就是这个实验真正要观察的模式。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="guided-lab" class="guided-lab" aria-labelledby="guided-title">
+      <div class="guided-head">
+        <div>
+          <p class="section-number">5 分钟引导实验 · 不消耗模型额度</p>
+          <h2 id="guided-title">H 一次是 50/50，<br>为什么 H 两次却回到 0？</h2>
+        </div>
+        <p>不要先背答案。你会连续做三个只有一处不同的实验，每次先预测、再运行，用结果找出“量子硬币”和普通硬币真正不同的地方。</p>
+      </div>
+
+      <ol id="lesson-progress" class="lesson-progress" aria-label="实验进度">
+        <li class="active" aria-current="step"><span>1</span>确定的起点</li>
+        <li><span>2</span>一次 H</li>
+        <li><span>3</span>两次 H</li>
+        <li><span>4</span>理解检验</li>
+      </ol>
+
+      <div id="lesson-workspace" class="lesson-workspace">
+        <div class="lesson-copy">
+          <p id="lesson-kicker" class="lesson-kicker"></p>
+          <h3 id="lesson-title"></h3>
+          <p id="lesson-description" class="lesson-description"></p>
+          <div id="lesson-circuit" class="lesson-circuit" aria-label="当前量子电路"></div>
+          <p id="lesson-circuit-caption" class="circuit-caption"></p>
+        </div>
+
+        <div class="prediction-card">
+          <p class="prediction-label">先预测，再看答案</p>
+          <h4 id="lesson-question"></h4>
+          <div id="prediction-options" class="prediction-options" role="group" aria-label="选择你的预测"></div>
+          <button id="lesson-run" class="primary-button lesson-run" type="button" disabled>选择一个预测</button>
+          <p class="no-token-note">使用本地量子模拟器运行 1,024 次，不会调用 DeepSeek。</p>
+        </div>
+      </div>
+
+      <div id="lesson-working" class="working lesson-working" hidden aria-live="polite">
+        <span class="loom-loader" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div><strong>正在重复实验 1,024 次</strong><p>一次测量只是一个样本，很多次测量才能看见概率规律。</p></div>
+      </div>
+
+      <section id="lesson-feedback" class="lesson-feedback" hidden aria-live="polite">
+        <div>
+          <p class="section-number">实际测量</p>
+          <div id="lesson-chart" class="lesson-chart"></div>
+        </div>
+        <div class="lesson-explanation">
+          <p id="prediction-verdict" class="prediction-verdict"></p>
+          <h3 id="lesson-observation"></h3>
+          <p id="lesson-why"></p>
+          <div id="path-explanation" class="path-explanation" hidden></div>
+          <button id="lesson-continue" class="secondary-button" type="button">进入下一个实验</button>
+        </div>
+      </section>
+
+      <section id="lesson-quiz" class="lesson-quiz" hidden aria-live="polite">
+        <p class="section-number">最后一步 · 不是背术语</p>
+        <h3>连续两个 H 为什么能让结果回到 0？</h3>
+        <div class="quiz-options" role="group" aria-label="理解检验">
+          <button type="button" data-quiz-answer="random">两次随机变化碰巧抵消了</button>
+          <button type="button" data-quiz-answer="interference">第二个 H 让两条可能路径重新汇合：通往 1 的相消，通往 0 的相长</button>
+          <button type="button" data-quiz-answer="fixed">模拟器预先固定了答案</button>
+        </div>
+        <div id="quiz-feedback" class="quiz-feedback" hidden></div>
+      </section>
+
+      <div id="lesson-complete" class="lesson-complete" hidden>
+        <span aria-hidden="true">✓</span>
+        <div><strong>你已经抓住第一个真正的量子概念</strong><p>一次 H 的测量结果像随机硬币；但测量前的可能性还带着可相长、可相消的信息，所以第二个 H 能恢复确定的 0。这种现象叫干涉。</p></div>
+        <a class="primary-link" href="#studio">带着这个认识自由探索 <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div id="lesson-error" class="error-box" hidden role="alert"></div>
+    </section>
+
+    <section id="studio" class="studio" aria-labelledby="studio-title">
+      <div class="studio-head">
+        <div>
+          <p class="section-number">自由探索模式</p>
+          <h2 id="studio-title">现在，说说你想验证什么。</h2>
+        </div>
+        <p>你负责提出好奇心，LoomQ 负责把它变成机器能懂、而且确实跑得通的电路。</p>
+      </div>
+
+      <div class="prompt-shell">
+        <label for="prompt">我想要……</label>
+        <textarea id="prompt" rows="4" placeholder="例如：让三枚量子硬币总是一起开出同一面，然后告诉我这意味着什么"></textarea>
+        <div class="prompt-actions">
+          <span>Ctrl / ⌘ + Enter 发送</span>
+          <button id="send" class="primary-button" type="button">请 LoomQ 帮我实现 <b aria-hidden="true">→</b></button>
+        </div>
+      </div>
+
+      <div class="examples" aria-label="可以尝试的目标">
+        <button type="button" data-prompt="让两枚量子硬币总是一起开出相同的一面，并全部测量">两枚硬币总是同步</button>
+        <button type="button" data-prompt="生成一个 5 比特 GHZ 态并全部测量，请用生活里的比喻解释结果">五个选择保持一致</button>
+        <button type="button" data-prompt="我需要运行一个 15 比特电路，要求免费、零排队、无需账号，请推荐后端">帮我选择运行地点</button>
+        <button type="button" data-prompt="我想制备贝尔态，但代码写坏了：H q[0]; CX q[0] q[1]。请修复并解释">修复一段坏掉的实验</button>
+      </div>
+
+      <div id="working" class="working" hidden aria-live="polite">
+        <span class="loom-loader" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div><strong>LoomQ 正在翻译并试跑</strong><p>不是只生成一段看起来正确的代码，我们会让可执行的模拟后端先检查一遍。</p></div>
+      </div>
+
+      <section id="answer-panel" class="answer-panel" hidden aria-live="polite">
+        <div class="answer-label">LoomQ 的回答</div>
+        <p id="answer-text"></p>
+        <details id="code-details" hidden>
+          <summary>查看机器收到的翻译 <span>OpenQASM 2.0</span></summary>
+          <pre><code id="qasm-code"></code></pre>
+        </details>
+        <div id="run-controls" class="run-controls" hidden>
+          <label>在哪里运行
+            <select id="target">
+              <option value="originq">本源 · 本地模拟器</option>
+              <option value="spinq">量旋 · Taurus 模拟器</option>
+              <option value="braket">AWS · Braket 本地模拟器</option>
+            </select>
+          </label>
+          <label>重复开奖
+            <select id="shots">
+              <option value="512">512 次（快速）</option>
+              <option value="1024" selected>1,024 次（推荐）</option>
+              <option value="8192">8,192 次（比赛标准）</option>
+            </select>
+          </label>
+          <button id="run" class="secondary-button" type="button">运行这个实验</button>
+        </div>
+      </section>
+
+      <section id="result-panel" class="result-panel" hidden aria-live="polite">
+        <div class="result-heading">
+          <div><p class="section-number">实验结果</p><h3>重复开奖后，看见了这些模式</h3></div>
+          <span id="backend-badge"></span>
+        </div>
+        <div id="chart" class="chart"></div>
+        <div class="plain-result"><span aria-hidden="true">✦</span><p id="result-explanation"></p></div>
+      </section>
+
+      <div id="error" class="error-box" hidden role="alert"></div>
+    </section>
+
+    <section class="use-cases" aria-labelledby="uses-title">
+      <div class="section-intro">
+        <p class="section-number">它今天能帮你什么</p>
+        <h2 id="uses-title">先用来探索规律，不许诺魔法</h2>
+      </div>
+      <div class="use-grid">
+        <article><span>探索</span><h3>把一个好奇的问题变成实验</h3><p>观察多个选择如何关联、哪些结果会被放大，适合教学、创作和概念验证。</p></article>
+        <article><span>验证</span><h3>比较不同量子电路的结果</h3><p>先在模拟器低成本试跑，再决定是否值得排队提交到真实量子机器。</p></article>
+        <article><span>接入</span><h3>替你跨过平台方言</h3><p>同一个目标可被翻译给量旋、本源和 Braket，不必分别学习三套工具。</p></article>
+      </div>
+      <p class="honesty-note"><strong>诚实边界：</strong>今天的量子计算机还不会让普通网站、表格或 App 自动变快。它更像早期实验室设备，价值在于学习新计算方式，并为未来的优化、材料和模拟问题准备工具。</p>
+    </section>
+  </main>
+
+  <footer><span>LoomQ · Quantum access, woven for everyone.</span><span>所有 API 凭证只从服务端环境变量读取，不会进入浏览器。</span></footer>
+  <script src="/app.js" defer></script>
+</body>
+</html>

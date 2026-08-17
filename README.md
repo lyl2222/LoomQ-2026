@@ -1,3 +1,16 @@
+# LoomQ 提交（lyl2222）
+
+本 fork 的正式评测入口是 [`starter_kit/`](starter_kit/README.md)。本地验证与零基础网页都从那里启动：
+
+```bash
+cd starter_kit && make unit
+cd starter_kit && make verify
+```
+
+不要提交 `.env`。本地 L2 调试请复制 `starter_kit/.env.example` 为 `.env`，填入自己的模型服务配置。
+
+---
+
 # LoomQ · 量子接入平权计划：赛题发布包
 
 > SheNicest 2026 夏季千人烈变黑客松 · 正式赛题（选手分发版）

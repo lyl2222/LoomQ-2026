@@ -1,0 +1,32 @@
+{
+  "backend": "spinq_cloud_qpu",
+  "platform_name": "2比特核磁量子计算机",
+  "job_id": "G-260817-0006",
+  "shots": null,
+  "counts": null,
+  "probabilities": {
+    "00": 0.46999718,
+    "01": 0.07195608,
+    "10": 0.05985844,
+    "11": 0.3981883
+  },
+  "bit_order": "little",
+  "timestamp": "2026-08-17T16:22:40+08:00",
+  "finished_at": "2026-08-17T16:24:13+08:00",
+  "meta": {
+    "source": "spinq_cloud_web_export",
+    "hardware_kind": "qpu",
+    "hardware": "2-qubit NMR",
+    "status": "运行成功",
+    "result_kind": "projection_probabilities",
+    "original_result": "evidence/files/task_result_G-260817-0006.msgpack",
+    "original_format": "msgpack",
+    "circuit": "evidence/files/G-260817-0006-qasm.qasm",
+    "screenshot": "evidence/files/spinq-screenshot.png",
+    "dominant_states": [
+      "00",
+      "11"
+    ],
+    "note": "SpinQ Cloud exported projection probabilities, not shot counts. shots is therefore omitted rather than invented."
+  }
+}

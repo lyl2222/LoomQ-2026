@@ -8,7 +8,7 @@
 
 把要申报项目的方框改成 `[x]`，并填写对应内容：
 
-- [ ] L1 真机
+- [x] L1 真机
 - [x] L2 交互体验
 - [x] 工程与产品化
 - [ ] 自定义量子 RISC-V Bonus
@@ -19,22 +19,36 @@
 每个有效真机平台计 5 分，最多两个平台。模拟器不计真机分。每个平台复制并填写一次下面的信息：
 
 ```text
-平台名称：[填写]
-平台 job ID：[填写]
-运行时间：[填写，带时区]
-shots：[填写]
-实际执行的 QASM：[填写仓库内路径]
-平台返回的原始结果：[填写仓库内路径]
-任务页截图：[选填，填写仓库内路径]
+平台名称：量旋云 2比特核磁量子计算机
+平台 job ID：G-260817-0006
+运行时间：2026-08-17 16:22:40 CST（结束 16:24:13 CST）
+shots：平台导出未提供 shot 计数；原始结果为投影概率
+实际执行的 QASM：evidence/files/spinq-circuit.qasm
+平台返回的原始结果：evidence/files/task_result_G-260817-0006.msgpack
+解码后的可读结果：evidence/files/spinq-result.json
+任务页截图：evidence/files/spinq-screenshot.png
+电路图截图：evidence/files/spinq-circuit-diagram.png
+主导态：00（0.46999718）、11（0.3981883）；01/10 为真机噪声
 ```
-
-建议把文件放进 `evidence/files/`，比如：
 
 ```text
-evidence/files/spinq-circuit.qasm
-evidence/files/spinq-result.json
-evidence/files/spinq-screenshot.png
+平台名称：本源悟空 180 超导真机
+平台 job ID：9DFE2160F08B6E9D53137E8F28A117A3
+运行时间：2026-08-18 10:18:34.394 CST（结束 10:18:38.793 CST）
+shots：1000
+实际执行的 QASM：evidence/files/originq-circuit.qasm
+平台返回的原始结果：evidence/files/9DFE2160F08B6E9D53137E8F28A117A3_probability.txt
+解码后的可读结果：evidence/files/originq-result.json
+任务页截图：evidence/files/originq-screenshot.png
+逻辑电路截图：evidence/files/originq-logical-circuit.png
+映射后芯片线路：evidence/files/originq-mapped-circuit.png
+图形化编程页：evidence/files/originq-composer.png
+主导态：00（0.522）、11（0.340）；01/10 为真机噪声
 ```
+
+未采用更早的本源任务 `9A2D003526D16751AC7386CEDDCC96F4`：该次主峰为 `00`/`01`，CNOT 方向错误，不是贝尔态。
+
+量旋云网页导出为 MessagePack，本源导出为概率 txt。均保留平台原始文件，另附解码 JSON 便于核验。
 
 工作人员会核对 job ID、运行时间、电路、shots 和原始结果。截图只能辅助说明，不能代替 job ID 和原始结果。
 

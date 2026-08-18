@@ -17,10 +17,12 @@ try:
     from . import adapter
     from .loomq.circuit import parse_qasm2
     from .loomq.ideal import ideal_probabilities
+    from .loomq.interpret import interpret_run
 except ImportError:
     import adapter
     from loomq.circuit import parse_qasm2
     from loomq.ideal import ideal_probabilities
+    from loomq.interpret import interpret_run
 
 
 ROOT = Path(__file__).resolve().parent
@@ -100,6 +102,7 @@ def _run(payload: Any) -> dict[str, Any]:
     result = dict(adapter.run(qasm, target, shots))
     result["kind"] = "noiseless_simulator"
     result["ideal"] = _ideal_overlay(qasm)
+    result["interpreter"] = interpret_run(qasm, target, shots, result)
     return result
 
 

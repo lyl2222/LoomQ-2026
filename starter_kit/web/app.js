@@ -240,9 +240,42 @@ function renderCompareChart(chart, result, required = []) {
   });
 }
 
+function renderInterpreter(root, data) {
+  if (!root) return;
+  if (!data || !data.title) {
+    root.hidden = true;
+    return;
+  }
+  root.hidden = false;
+  root.querySelector('.interpreter-title').textContent = data.title;
+  root.querySelector('.interpreter-summary').textContent = data.summary || '';
+  const steps = root.querySelector('.interpreter-steps');
+  steps.replaceChildren();
+  (data.steps || []).forEach((text) => {
+    const item = document.createElement('li');
+    item.textContent = text;
+    steps.append(item);
+  });
+  const params = root.querySelector('.interpreter-params');
+  params.replaceChildren();
+  (data.parameters || []).forEach((item) => {
+    const card = document.createElement('article');
+    const label = document.createElement('h4');
+    label.textContent = item.label;
+    const value = document.createElement('strong');
+    value.textContent = item.value;
+    const why = document.createElement('p');
+    why.textContent = item.why;
+    card.append(label, value, why);
+    params.append(card);
+  });
+  root.querySelector('.interpreter-reading').textContent = data.reading || '';
+}
+
 function renderLessonChart(result) {
   renderCompareChart($('#lesson-chart'), result, ['0', '1']);
   $('#lesson-run-meta').textContent = formatRunMeta(result);
+  renderInterpreter($('#lesson-interpreter'), result.interpreter);
 }
 
 function renderPathExplanation(paths = []) {
@@ -382,6 +415,7 @@ function renderChart(result) {
   renderCompareChart($('#chart'), result);
   $('#backend-badge').textContent = backendLabel(result.backend);
   $('#studio-run-meta').textContent = formatRunMeta(result);
+  renderInterpreter($('#studio-interpreter'), result.interpreter);
   $('#result-explanation').textContent = explainResult(result.counts, result.shots);
 }
 

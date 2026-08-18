@@ -39,6 +39,11 @@ class WebApiTests(unittest.TestCase):
         self.assertEqual(result["kind"], "noiseless_simulator")
         self.assertAlmostEqual(result["ideal"]["00"], 0.5)
         self.assertAlmostEqual(result["ideal"]["11"], 0.5)
+        self.assertIn("贝尔", result["interpreter"]["title"])
+        self.assertEqual(
+            [item["label"] for item in result["interpreter"]["parameters"]],
+            ["运行地点", "重复开奖", "量子硬币", "记下的位数", "中间操作"],
+        )
         run.assert_called_once_with(QASM, "braket", 100)
 
     def test_run_rejects_unbounded_shots(self):
@@ -77,6 +82,9 @@ class WebApiTests(unittest.TestCase):
         self.assertIn("理想分布", page)
         self.assertIn("renderCompareChart", script)
         self.assertIn("formatRunMeta", script)
+        self.assertIn("renderInterpreter", script)
+        self.assertIn('id="lesson-interpreter"', page)
+        self.assertIn("实验解读", page)
 
 
 if __name__ == "__main__":

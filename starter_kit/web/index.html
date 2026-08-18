@@ -96,8 +96,14 @@
 
       <section id="lesson-feedback" class="lesson-feedback" hidden aria-live="polite">
         <div>
-          <p class="section-number">实际测量</p>
+          <p class="section-number">实验对照</p>
+          <p id="lesson-run-meta" class="run-meta"></p>
+          <div class="chart-legend" aria-hidden="true">
+            <span><i class="swatch sample"></i>本次采样</span>
+            <span><i class="swatch ideal"></i>理想分布</span>
+          </div>
           <div id="lesson-chart" class="lesson-chart"></div>
+          <p id="lesson-chart-note" class="chart-note">本地模拟器没有硬件噪声，所以橙色的本次采样会贴着灰色的理想分布。真机上 01 和 10 会被抬起来。</p>
         </div>
         <div class="lesson-explanation">
           <p id="prediction-verdict" class="prediction-verdict"></p>
@@ -186,10 +192,16 @@
 
       <section id="result-panel" class="result-panel" hidden aria-live="polite">
         <div class="result-heading">
-          <div><p class="section-number">实验结果</p><h3>重复开奖后，看见了这些模式</h3></div>
+          <div><p class="section-number">实验结果</p><h3>把这次采样和理想分布放在一起看</h3></div>
           <span id="backend-badge"></span>
         </div>
+        <p id="studio-run-meta" class="run-meta"></p>
+        <div class="chart-legend" aria-hidden="true">
+          <span><i class="swatch sample"></i>本次采样</span>
+          <span><i class="swatch ideal"></i>理想分布</span>
+        </div>
         <div id="chart" class="chart"></div>
+        <p id="studio-chart-note" class="chart-note">本地无噪声模拟器上，两条柱会靠得很近。真机任务则会在 01 / 10 上抬起额外计数，那是噪声而不是电路设计。</p>
         <div class="plain-result"><span aria-hidden="true">✦</span><p id="result-explanation"></p></div>
       </section>
 

@@ -168,29 +168,81 @@ function renderLessonStep() {
   $('#lesson-error').hidden = true;
 }
 
-function renderLessonChart(result) {
-  const chart = $('#lesson-chart');
-  const shots = result.shots || LESSON_SHOTS;
-  chart.replaceChildren();
-  ['0', '1'].forEach((state) => {
-    const count = result.counts[state] || 0;
-    const row = document.createElement('div');
-    row.className = 'bar-row';
-    const label = document.createElement('span');
-    label.className = 'bar-label';
-    label.textContent = state;
+const BACKEND_LABELS = {
+  originq_cpu_simulator: '本源 · 本地模拟器',
+  spinq_basic_simulator: '量旋 · Taurus 模拟器',
+  braket_local_simulator: 'AWS · Braket 本地模拟器',
+};
+
+function backendLabel(backend) {
+  return BACKEND_LABELS[backend] || backend || '本地模拟器';
+}
+
+function formatRunTime(timestamp) {
+  if (!timestamp) return '';
+  const parsed = new Date(timestamp);
+  if (Number.isNaN(parsed.getTime())) return timestamp;
+  return parsed.toISOString().replace('T', ' ').replace(/\.\d+Z$/, ' UTC').replace('Z', ' UTC');
+}
+
+function formatRunMeta(result) {
+  const shots = (result.shots || LESSON_SHOTS).toLocaleString();
+  const when = formatRunTime(result.timestamp);
+  return when
+    ? `${backendLabel(result.backend)} · ${shots} shots · ${when}`
+    : `${backendLabel(result.backend)} · ${shots} shots`;
+}
+
+function compareStates(result, required = []) {
+  const counts = result.counts || {};
+  const ideal = result.ideal || {};
+  const shots = result.shots || 1;
+  const notable = Object.keys(ideal).filter((state) => (ideal[state] || 0) >= 0.005);
+  const states = [...new Set([...required, ...Object.keys(counts), ...notable])];
+  states.sort((left, right) => {
+    const score = (state) => Math.max((counts[state] || 0) / shots, ideal[state] || 0);
+    return score(right) - score(left) || left.localeCompare(right);
+  });
+  return states.slice(0, 12);
+}
+
+function appendGroupedBar(chart, state, sampleShare, idealShare) {
+  const row = document.createElement('div');
+  row.className = 'bar-group';
+  const label = document.createElement('span');
+  label.className = 'bar-label';
+  label.textContent = state;
+  const pair = document.createElement('div');
+  pair.className = 'bar-pair';
+  [['sample', sampleShare], ['ideal', idealShare]].forEach(([kind, share]) => {
     const track = document.createElement('div');
-    track.className = 'bar-track';
+    track.className = `bar-track ${kind}`;
     const fill = document.createElement('div');
     fill.className = 'bar-fill';
-    fill.style.width = `${count / shots * 100}%`;
+    fill.style.width = `${Math.max(0.2, share * 100)}%`;
     track.append(fill);
-    const value = document.createElement('span');
-    value.className = 'bar-value';
-    value.textContent = `${(count / shots * 100).toFixed(1)}%`;
-    row.append(label, track, value);
-    chart.append(row);
+    pair.append(track);
   });
+  const value = document.createElement('span');
+  value.className = 'bar-value';
+  value.textContent = `${(sampleShare * 100).toFixed(1)}% / ${(idealShare * 100).toFixed(1)}%`;
+  row.append(label, pair, value);
+  chart.append(row);
+}
+
+function renderCompareChart(chart, result, required = []) {
+  const shots = result.shots || LESSON_SHOTS;
+  const counts = result.counts || {};
+  const ideal = result.ideal || {};
+  chart.replaceChildren();
+  compareStates(result, required).forEach((state) => {
+    appendGroupedBar(chart, state, (counts[state] || 0) / shots, ideal[state] || 0);
+  });
+}
+
+function renderLessonChart(result) {
+  renderCompareChart($('#lesson-chart'), result, ['0', '1']);
+  $('#lesson-run-meta').textContent = formatRunMeta(result);
 }
 
 function renderPathExplanation(paths = []) {
@@ -327,30 +379,9 @@ function explainResult(counts, shots) {
 }
 
 function renderChart(result) {
-  const entries = Object.entries(result.counts).sort((a, b) => b[1] - a[1]);
-  const visible = entries.slice(0, 12);
-  const maximum = visible[0]?.[1] || 1;
-  const chart = $('#chart');
-  chart.replaceChildren();
-  visible.forEach(([state, count]) => {
-    const row = document.createElement('div');
-    row.className = 'bar-row';
-    const label = document.createElement('span');
-    label.className = 'bar-label';
-    label.textContent = state;
-    const track = document.createElement('div');
-    track.className = 'bar-track';
-    const fill = document.createElement('div');
-    fill.className = 'bar-fill';
-    fill.style.width = `${Math.max(0.2, count / maximum * 100)}%`;
-    track.append(fill);
-    const value = document.createElement('span');
-    value.className = 'bar-value';
-    value.textContent = `${count.toLocaleString()} · ${(count / result.shots * 100).toFixed(1)}%`;
-    row.append(label, track, value);
-    chart.append(row);
-  });
-  $('#backend-badge').textContent = result.backend;
+  renderCompareChart($('#chart'), result);
+  $('#backend-badge').textContent = backendLabel(result.backend);
+  $('#studio-run-meta').textContent = formatRunMeta(result);
   $('#result-explanation').textContent = explainResult(result.counts, result.shots);
 }
 

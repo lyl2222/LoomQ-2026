@@ -29,9 +29,16 @@ class WebApiTests(unittest.TestCase):
 
     @patch.object(web_app.adapter, "run")
     def test_run_forwards_a_bounded_request_to_l1(self, run):
-        run.return_value = {"counts": {"00": 50, "11": 50}}
+        run.return_value = {
+            "backend": "braket_local_simulator",
+            "shots": 100,
+            "counts": {"00": 50, "11": 50},
+        }
         result = web_app._run({"qasm": QASM, "target": "braket", "shots": 100})
         self.assertEqual(result["counts"], {"00": 50, "11": 50})
+        self.assertEqual(result["kind"], "noiseless_simulator")
+        self.assertAlmostEqual(result["ideal"]["00"], 0.5)
+        self.assertAlmostEqual(result["ideal"]["11"], 0.5)
         run.assert_called_once_with(QASM, "braket", 100)
 
     def test_run_rejects_unbounded_shots(self):
@@ -66,6 +73,10 @@ class WebApiTests(unittest.TestCase):
         self.assertIn("qasm: lessonQasm(step.gateCount)", script)
         self.assertIn("target: 'originq'", script)
         self.assertIn("shots: LESSON_SHOTS", script)
+        self.assertIn("本次采样", page)
+        self.assertIn("理想分布", page)
+        self.assertIn("renderCompareChart", script)
+        self.assertIn("formatRunMeta", script)
 
 
 if __name__ == "__main__":

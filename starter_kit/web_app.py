@@ -15,8 +15,12 @@ from urllib.parse import unquote, urlparse
 
 try:
     from . import adapter
+    from .loomq.circuit import parse_qasm2
+    from .loomq.ideal import ideal_probabilities
 except ImportError:
     import adapter
+    from loomq.circuit import parse_qasm2
+    from loomq.ideal import ideal_probabilities
 
 
 ROOT = Path(__file__).resolve().parent
@@ -69,6 +73,18 @@ def _chat(payload: Any) -> dict[str, Any]:
     }
 
 
+def _ideal_overlay(qasm: str) -> dict[str, float]:
+    """Exact noiseless probabilities for the web chart. Not part of adapter.run()."""
+
+    try:
+        return {
+            state: round(probability, 10)
+            for state, probability in ideal_probabilities(parse_qasm2(qasm)).items()
+        }
+    except (ValueError, MemoryError):
+        return {}
+
+
 def _run(payload: Any) -> dict[str, Any]:
     if not isinstance(payload, dict):
         raise ValueError("请求内容必须是 JSON 对象")
@@ -81,7 +97,10 @@ def _run(payload: Any) -> dict[str, Any]:
         raise ValueError("未知后端，请选择 spinq、originq 或 braket")
     if not isinstance(shots, int) or isinstance(shots, bool) or not 1 <= shots <= 100000:
         raise ValueError("运行次数必须是 1 到 100000 之间的整数")
-    return adapter.run(qasm, target, shots)
+    result = dict(adapter.run(qasm, target, shots))
+    result["kind"] = "noiseless_simulator"
+    result["ideal"] = _ideal_overlay(qasm)
+    return result
 
 
 class LoomQHandler(BaseHTTPRequestHandler):
